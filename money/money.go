@@ -12,6 +12,7 @@ func (m *Money) Amount() int {
 	return m.amount
 }
 
-func (m *Money) Times(multiplier int) {
-	m.amount *= multiplier
+func (m *Money) Times(multiplier int) *Money {
+	a := m.amount * multiplier
+	return &Money{amount: a}
 }
