@@ -1,22 +1,38 @@
 package money
 
-type Money struct {
+type Dollar struct {
 	amount int
 }
 
-func NewMoney(i int) *Money {
-	return &Money{amount: i}
+func NewDollar(i int) *Dollar {
+	return &Dollar{amount: i}
 }
 
-func (m *Money) Amount() int {
-	return m.amount
+func (d *Dollar) Amount() int {
+	return d.amount
 }
 
-func (m *Money) Times(multiplier int) *Money {
-	return NewMoney(m.Amount() * multiplier)
+func (d *Dollar) Times(multiplier int) *Dollar {
+	return NewDollar(d.Amount() * multiplier)
 }
 
-func (m *Money) equals(other interface{}) bool {
-	mm := other.(*Money)
-	return m.Amount() == mm.Amount()
+func (d *Dollar) equals(other interface{}) bool {
+	mm := other.(*Dollar)
+	return d.Amount() == mm.Amount()
+}
+
+type Franc struct {
+	amount int
+}
+
+func NewFranc(i int) *Franc {
+	return &Franc{amount: i}
+}
+
+func (f *Franc) Amount() int {
+	return f.amount
+}
+
+func (f *Franc) Times(multiplier int) *Franc {
+	return NewFranc(f.Amount() * multiplier)
 }
