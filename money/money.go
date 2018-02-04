@@ -18,41 +18,33 @@ func (m *Money) Currency() string {
 	return m.currency
 }
 
+func newMoney(i int, s string) *Money {
+	return &Money{
+		amount:   i,
+		currency: s,
+	}
+}
+
+func (m *Money) Times(multiplier int) *Money {
+	return newMoney(m.amount*multiplier, m.currency)
+}
+
 func (m *Money) equals(other interface{}) bool {
 	mm := other.(IMoney)
-	return m.Amount() == mm.Amount()
+	return m.Amount() == mm.Amount() &&
+		m.Currency() == mm.Currency()
 }
 
-type Dollar struct {
-	Money
-}
-
-func NewDollar(i int) *Dollar {
-	return &Dollar{
-		Money{
-			amount:   i,
-			currency: "USD",
-		},
+func NewDollar(i int) *Money {
+	return &Money{
+		amount:   i,
+		currency: "USD",
 	}
 }
 
-func (d *Dollar) Times(multiplier int) *Dollar {
-	return NewDollar(d.Amount() * multiplier)
-}
-
-type Franc struct {
-	Money
-}
-
-func NewFranc(i int) *Franc {
-	return &Franc{
-		Money{
-			amount:   i,
-			currency: "CHF",
-		},
+func NewFranc(i int) *Money {
+	return &Money{
+		amount:   i,
+		currency: "CHF",
 	}
-}
-
-func (f *Franc) Times(multiplier int) *Franc {
-	return NewFranc(f.Amount() * multiplier)
 }
