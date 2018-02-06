@@ -36,15 +36,9 @@ func (m *Money) equals(other interface{}) bool {
 }
 
 func NewDollar(i int) *Money {
-	return &Money{
-		amount:   i,
-		currency: "USD",
-	}
+	return newMoney(i, "USD")
 }
 
 func NewFranc(i int) *Money {
-	return &Money{
-		amount:   i,
-		currency: "CHF",
-	}
+	return newMoney(i, "CHF")
 }
