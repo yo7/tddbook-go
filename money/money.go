@@ -5,7 +5,13 @@ type IMoney interface {
 	Currency() string
 }
 
-type Expression interface{}
+type Expression interface {
+	Reduce(to string) *Money
+}
+
+type Sum struct {
+	augend, addend *Money
+}
 
 type Money struct {
 	amount   int
@@ -32,14 +38,17 @@ func (m *Money) Times(multiplier int) *Money {
 }
 
 func (m *Money) Plus(addend *Money) Expression {
-	i := m.Amount() + addend.Amount()
-	return newMoney(i, m.Currency())
+	return &Sum{m, addend}
 }
 
 func (m *Money) equals(other interface{}) bool {
 	mm := other.(IMoney)
 	return m.Amount() == mm.Amount() &&
 		m.Currency() == mm.Currency()
+}
+
+func (m *Money) Reduce(to string) *Money {
+	return m
 }
 
 func NewDollar(i int) *Money {
@@ -50,9 +59,13 @@ func NewFranc(i int) *Money {
 	return newMoney(i, "CHF")
 }
 
+func (s *Sum) Reduce(to string) *Money {
+	amount := s.augend.amount + s.addend.amount
+	return newMoney(amount, to)
+}
+
 type Bank struct{}
 
 func (b *Bank) Reduce(source Expression, to string) *Money {
-	// 仮実装
-	return NewDollar(10)
+	return source.Reduce(to)
 }
