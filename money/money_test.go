@@ -51,7 +51,14 @@ func TestReduceSum(t *testing.T) {
 }
 
 func TestReduceMoney(t *testing.T) {
-	b := new(Bank)
+	b := Bank{}
 	result := b.Reduce(NewDollar(1), "USD")
+	assert.Equal(t, NewDollar(1), result)
+}
+
+func TestReduceMoneyDifferentCurrency(t *testing.T) {
+	b := Bank{}
+	b.addRate("CHF", "USD", 2)
+	result := b.Reduce(NewFranc(2), "USD")
 	assert.Equal(t, NewDollar(1), result)
 }

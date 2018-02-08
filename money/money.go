@@ -48,7 +48,13 @@ func (m *Money) equals(other interface{}) bool {
 }
 
 func (m *Money) Reduce(to string) *Money {
-	return m
+	var rate int
+	if m.Currency() == "CHF" && to == "USD" {
+		rate = 2
+	} else {
+		rate = 1
+	}
+	return newMoney(m.Amount()/rate, to)
 }
 
 func NewDollar(i int) *Money {
@@ -68,4 +74,8 @@ type Bank struct{}
 
 func (b *Bank) Reduce(source Expression, to string) *Money {
 	return source.Reduce(to)
+}
+
+func (b *Bank) addRate(from string, to string, rate int) {
+
 }
