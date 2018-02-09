@@ -6,11 +6,12 @@ type IMoney interface {
 }
 
 type Expression interface {
+	Plus(addend Expression) Expression
 	Reduce(bank Bank, to string) *Money
 }
 
 type Sum struct {
-	augend, addend *Money
+	augend, addend Expression
 }
 
 type Money struct {
@@ -33,11 +34,11 @@ func newMoney(i int, s string) *Money {
 	}
 }
 
-func (m *Money) Times(multiplier int) *Money {
+func (m *Money) Times(multiplier int) Expression {
 	return newMoney(m.amount*multiplier, m.currency)
 }
 
-func (m *Money) Plus(addend *Money) Expression {
+func (m *Money) Plus(addend Expression) Expression {
 	return &Sum{m, addend}
 }
 
@@ -60,8 +61,12 @@ func NewFranc(i int) *Money {
 	return newMoney(i, "CHF")
 }
 
+func (s *Sum) Plus(addend Expression) Expression {
+	return nil
+}
+
 func (s *Sum) Reduce(bank Bank, to string) *Money {
-	amount := s.augend.amount + s.addend.amount
+	amount := s.augend.Reduce(bank, to).amount + s.addend.Reduce(bank, to).amount
 	return newMoney(amount, to)
 }
 
