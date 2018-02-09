@@ -6,7 +6,7 @@ type IMoney interface {
 }
 
 type Expression interface {
-	Reduce(to string) *Money
+	Reduce(bank Bank, to string) *Money
 }
 
 type Sum struct {
@@ -47,13 +47,8 @@ func (m *Money) equals(other interface{}) bool {
 		m.Currency() == mm.Currency()
 }
 
-func (m *Money) Reduce(to string) *Money {
-	var rate int
-	if m.Currency() == "CHF" && to == "USD" {
-		rate = 2
-	} else {
-		rate = 1
-	}
+func (m *Money) Reduce(bank Bank, to string) *Money {
+	rate := bank.rate(m.Currency(), to)
 	return newMoney(m.Amount()/rate, to)
 }
 
@@ -65,17 +60,36 @@ func NewFranc(i int) *Money {
 	return newMoney(i, "CHF")
 }
 
-func (s *Sum) Reduce(to string) *Money {
+func (s *Sum) Reduce(bank Bank, to string) *Money {
 	amount := s.augend.amount + s.addend.amount
 	return newMoney(amount, to)
 }
 
-type Bank struct{}
+type Pair struct {
+	from, to string
+}
+
+type Bank struct {
+	rates map[Pair]int
+}
+
+func NewBank() *Bank {
+	return &Bank{
+		rates: make(map[Pair]int),
+	}
+}
 
 func (b *Bank) Reduce(source Expression, to string) *Money {
-	return source.Reduce(to)
+	return source.Reduce(*b, to)
 }
 
 func (b *Bank) addRate(from string, to string, rate int) {
+	b.rates[Pair{from, to}] = rate
+}
 
+func (b *Bank) rate(from string, to string) int {
+	if from == to {
+		return 1
+	}
+	return b.rates[Pair{from, to}]
 }

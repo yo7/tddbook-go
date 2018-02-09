@@ -51,14 +51,23 @@ func TestReduceSum(t *testing.T) {
 }
 
 func TestReduceMoney(t *testing.T) {
-	b := Bank{}
+	b := NewBank()
 	result := b.Reduce(NewDollar(1), "USD")
 	assert.Equal(t, NewDollar(1), result)
 }
 
 func TestReduceMoneyDifferentCurrency(t *testing.T) {
-	b := Bank{}
+	b := NewBank()
 	b.addRate("CHF", "USD", 2)
 	result := b.Reduce(NewFranc(2), "USD")
 	assert.Equal(t, NewDollar(1), result)
+}
+
+func TestArrayEquals(t *testing.T) {
+	assert.Equal(t, []string{"abc"}, []string{"abc"})
+}
+
+func TestIdentityRate(t *testing.T) {
+	b := NewBank()
+	assert.Equal(t, 1, b.rate("USD", "USD"))
 }
